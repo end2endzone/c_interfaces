@@ -42,10 +42,27 @@ void *circle_clone(void *self) {
     return copy;
 }
 
+bool is_circle(void* addr)
+{
+  Circle* test = (Circle*)addr;
+  if ( test->cloneable.self == addr &&
+      test->drawable.self == addr &&
+      test->resizable.self == addr &&
+      test->shape.self == addr &&
+      test->cloneable.clone == circle_clone &&
+      test->drawable.draw == circle_draw &&
+      test->resizable.scale == circle_resize &&
+      test->shape.area == circle_area &&
+      test->shape.move == circle_move )
+    return true;
+  return false;
+}
+
 void init_circle(Circle * self, double radius, double x, double y) {
     self->radius = radius;
-    self->shape = (Shape){ self, circle_area, circle_perimeter, circle_move, x, y };
-    self->drawable = (Drawable){ self, circle_draw };
-    self->resizable = (Resizable){ self, circle_resize };
-    self->cloneable = (Cloneable){ self, circle_clone };
+    self->shape = (Shape){ circle_area, circle_perimeter, circle_move, x, y, self };
+    self->drawable = (Drawable){ circle_draw, self };
+    self->resizable = (Resizable){ circle_resize, self };
+    self->cloneable = (Cloneable){ circle_clone, self };
+    self->self = self;
 }

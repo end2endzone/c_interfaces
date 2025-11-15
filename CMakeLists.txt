@@ -29,6 +29,10 @@ source_group("headers" FILES
 
 # Add the main executable
 add_executable(main
+    src/app/is_clonable.body-template.h
+    src/app/is_drawable.body-template.h
+    src/app/is_resizable.body-template.h
+    src/app/is_shape.body-template.h
     src/app/main.c
 )
 

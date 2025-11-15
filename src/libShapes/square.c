@@ -41,10 +41,27 @@ void *square_clone(void *self) {
     return copy;
 }
 
+bool is_square(void* addr)
+{
+  Square* test = (Square*)addr;
+  if ( test->cloneable.self == addr &&
+      test->drawable.self == addr &&
+      test->resizable.self == addr &&
+      test->shape.self == addr &&
+      test->cloneable.clone == square_clone &&
+      test->drawable.draw == square_draw &&
+      test->resizable.scale == square_resize &&
+      test->shape.area == square_area &&
+      test->shape.move == square_move )
+    return true;
+  return false;
+}
+
 void init_square(Square * self, double side, double x, double y) {
     self->side = side;
-    self->shape = (Shape){ self, square_area, square_perimeter, square_move, x, y };
-    self->drawable = (Drawable){ self, square_draw };
-    self->resizable = (Resizable){ self, square_resize };
-    self->cloneable = (Cloneable){ self, square_clone };
+    self->shape = (Shape){ square_area, square_perimeter, square_move, x, y, self };
+    self->drawable = (Drawable){ square_draw, self };
+    self->resizable = (Resizable){ square_resize, self };
+    self->cloneable = (Cloneable){ square_clone, self };
+    self->self = self;
 }

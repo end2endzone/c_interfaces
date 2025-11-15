@@ -45,13 +45,30 @@ void *triangle_clone(void *self) {
     return copy;
 }
 
+bool is_triangle(void* addr)
+{
+  Triangle* test = (Triangle*)addr;
+  if ( test->cloneable.self == addr &&
+      test->drawable.self == addr &&
+      test->resizable.self == addr &&
+      test->shape.self == addr &&
+      test->cloneable.clone == triangle_clone &&
+      test->drawable.draw == triangle_draw &&
+      test->resizable.scale == triangle_resize &&
+      test->shape.area == triangle_area &&
+      test->shape.move == triangle_move )
+    return true;
+  return false;
+}
+
 void init_triangle(Triangle *self, double base, double height, double side_a, double side_b, double x, double y) {
     self->base = base;
     self->height = height;
     self->side_a = side_a;
     self->side_b = side_b;
-    self->shape = (Shape){ self, triangle_area, triangle_perimeter, triangle_move, x, y };
-    self->drawable = (Drawable){ self, triangle_draw };
-    self->resizable = (Resizable){ self, triangle_resize };
-    self->cloneable = (Cloneable){ self, triangle_clone };
+    self->shape = (Shape){ triangle_area, triangle_perimeter, triangle_move, x, y, self };
+    self->drawable = (Drawable){ triangle_draw, self };
+    self->resizable = (Resizable){ triangle_resize, self };
+    self->cloneable = (Cloneable){ triangle_clone, self };
+    self->self = self;
 }
